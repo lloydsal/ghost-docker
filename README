@@ -1,0 +1,14 @@
+## Instalation
+
+```
+docker-compose build
+docker-compose up
+```
+
+## Access Site
+
+```
+http://localhost:8080
+
+http://localhost:8080/ghost
+```

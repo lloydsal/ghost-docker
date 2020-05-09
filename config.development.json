@@ -1,14 +1,10 @@
 {
-    "url": "http://localhost:8080",
     "server": {
       "port": 2368,
       "host": "0.0.0.0"
     },
     "database": {
-      "client": "sqlite3",
-      "connection": {
-        "filename": "/var/lib/ghost/content/data/ghost.db"
-      }
+        "client": "mysql"
     },
     "mail": {
       "transport": "Direct"
@@ -21,15 +17,6 @@
     },
     "process": "systemd",
     "paths": {
-      "contentPath": "/var/lib/ghost/content"
-    },
-    "storage": {
-        "active": "ghost-s3",
-        "ghost-s3": {
-            "accessKeyId": "AKIATOBCGN23FCDCZ3EH",
-            "secretAccessKey": "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",
-            "bucket": "ghost-test-local",
-            "region": "ca-central-1"
-        }
+      "contentPath": "/var/www/ghost/content"
     }
   }

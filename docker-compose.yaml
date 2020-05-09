@@ -7,29 +7,35 @@ services:
       context: ./
       dockerfile: ghost.dockerfile
     restart: always
+    links: 
+      - db
     ports:
-      - 8080:2368
+      - ${SERVER_PORT}:2368
     environment:
       # see https://docs.ghost.org/docs/config#section-running-ghost-with-config-env-variables
-      NODE_ENV: development
-      database__client: mysql
-      database__connection__host: db
-      database__connection__user: ghost
-      database__connection__password: ghost
-      database__connection__database: ghost
+      url: ${SERVER_URL}
+      NODE_ENV: ${NODE_ENV}
+      database__client: ${DB_CLIENT}
+      database__connection__host: ${DB_HOST}
+      database__connection__database: ${DB_NAME}
+      database__connection__user: ${DB_USER}
+      database__connection__password: ${DB_PASSWORD}
     volumes: 
-      - ./config.development.json:/var/lib/ghost/config.development.json
-      # - ./content/:/var/lib/ghost/content/
+      - ./config.development.json:/var/www/ghost/config.development.json
+      - ./content/:/var/lib/ghost/content/
 
   db:
     image: mysql:5.7
     restart: always
     volumes:
-        - ./dbdata:/var/lib/mysql:z  # Persist storage
-    expose:
-      - "3306"
+        - dbdata:/var/lib/mysql:z  # Persist storage
+    ports:
+      - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=ghost
-      - MYSQL_USER=ghost
-      - MYSQL_PASSWORD=ghost
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  dbdata:
