@@ -2,21 +2,5 @@
     "server": {
       "port": 2368,
       "host": "0.0.0.0"
-    },
-    "database": {
-        "client": "mysql"
-    },
-    "mail": {
-      "transport": "Direct"
-    },
-    "logging": {
-      "transports": [
-        "file",
-        "stdout"
-      ]
-    },
-    "process": "systemd",
-    "paths": {
-      "contentPath": "/var/www/ghost/content"
     }
-  }
+}

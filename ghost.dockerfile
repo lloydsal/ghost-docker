@@ -1,49 +1,36 @@
 FROM ubuntu:18.04
 
+# Setup Variables
+ENV DOCKER_WORKING_DIR /var/www/ghost
+
 # Update package lists
 RUN apt-get update
 RUN apt-get upgrade
-RUN apt-get install -y sudo \
-                        curl 
+RUN apt-get install -y sudo curl 
 
-# # Install NGINX
-RUN apt-get install -y nginx
-# RUN ufw allow 'Nginx Full'
-
-# Add the NodeSource APT repository for Node 12
+# install Node.js, Ghost CLI
 RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash
-
-# Install Node.js, Ghost CLI
 RUN apt-get install -y nodejs
 RUN npm install ghost-cli@latest -g
 
-RUN mkdir -p /var/www/ghost
+RUN mkdir -p $DOCKER_WORKING_DIR
 
-# Create a new user and follow prompts
-RUN useradd -ms /bin/bash lloyd
-# Add user to superuser group to unlock admin privileges
-RUN usermod -aG sudo lloyd
+# Create a new user and assign appropriate permissions
+RUN useradd -ms /bin/bash ghostUser
+RUN usermod -aG sudo ghostUser
+RUN chown ghostUser:ghostUser $DOCKER_WORKING_DIR
+RUN chmod 775 $DOCKER_WORKING_DIR
+RUN cd $DOCKER_WORKING_DIR
 
-RUN chown lloyd:lloyd /var/www/ghost
-RUN chmod 775 /var/www/ghost
-RUN cd /var/www/ghost
-
-USER lloyd
-WORKDIR /var/www/ghost
+USER ghostUser
+WORKDIR $DOCKER_WORKING_DIR
 
 RUN ghost install local
 
+# Install s3 Adapter to push uploaded assets to AWS S3, CDN
+RUN npm install ghost-storage-adapter-s3
+RUN mkdir -p ./content/adapters/storage
+RUN cp -r ./node_modules/ghost-storage-adapter-s3 ./content/adapters/storage/s3
+
 EXPOSE 2368
 CMD ["node", "current/index.js"]
-
-
-
-
-
-
-
-
-
-
-
-

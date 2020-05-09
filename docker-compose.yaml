@@ -1,7 +1,6 @@
 version: '3.1'
 
 services:
-
   ghost:
     build:
       context: ./
@@ -12,7 +11,6 @@ services:
     ports:
       - ${SERVER_PORT}:2368
     environment:
-      # see https://docs.ghost.org/docs/config#section-running-ghost-with-config-env-variables
       url: ${SERVER_URL}
       NODE_ENV: ${NODE_ENV}
       database__client: ${DB_CLIENT}
@@ -20,15 +18,19 @@ services:
       database__connection__database: ${DB_NAME}
       database__connection__user: ${DB_USER}
       database__connection__password: ${DB_PASSWORD}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+      GHOST_STORAGE_ADAPTER_S3_PATH_BUCKET: ${GHOST_STORAGE_ADAPTER_S3_PATH_BUCKET}
     volumes: 
+      - ./content/:/var/www/ghost/content/
       - ./config.development.json:/var/www/ghost/config.development.json
-      - ./content/:/var/lib/ghost/content/
 
   db:
     image: mysql:5.7
     restart: always
     volumes:
-        - dbdata:/var/lib/mysql:z  # Persist storage
+        - dbdata:/var/lib/mysql:z
     ports:
       - 3306:3306
     environment:
