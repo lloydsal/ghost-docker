@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+
+  ghost:
+    build:
+      context: ./
+      dockerfile: ghost.dockerfile
+    restart: always
+    ports:
+      - 8080:2368
+    environment:
+      # see https://docs.ghost.org/docs/config#section-running-ghost-with-config-env-variables
+      NODE_ENV: development
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: ghost
+      database__connection__password: ghost
+      database__connection__database: ghost
+    volumes: 
+      - ./config.development.json:/var/lib/ghost/config.development.json
+      # - ./content/:/var/lib/ghost/content/
+
+  db:
+    image: mysql:5.7
+    restart: always
+    volumes:
+        - ./dbdata:/var/lib/mysql:z  # Persist storage
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=ghost
+      - MYSQL_USER=ghost
+      - MYSQL_PASSWORD=ghost
